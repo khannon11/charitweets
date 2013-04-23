@@ -1,9 +1,14 @@
 <html>
   <head>
-    <title>{% block head_title %}Welcome to the Charitweet Blog{% endblock %}</title>
+    <title>{% block title %}Welcome to the Charitweet Blog{% endblock %}</title>
   </head>
   <body>
-    <h1>{% block title %}Charitweet!{% endblock %}</h1>
+    <div class="top_bar">
+      <span class="top_name">Charitweet</span>
+      <a href="/accounts/logout">Log out Here!</a><br />
+    </div>
+    <hr>
+    <h1>{% block head_title %}Charitweet!{% endblock %}</h1>
     {% block content%}
 
     {% endblock %}

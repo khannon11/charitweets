@@ -112,8 +112,11 @@ TEMPLATE_DIRS = (
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
     '/home/ec2-user/code/charitweets/templates',
-    '/home/ec2-user/code/charitweets/blog/templates/blog',
+    '/home/ec2-user/code/charitweets/blog/templates',
+    '/home/ec2-user/code/charitweets/accounts/templates',
 )
+
+LOGIN_URL = 'accounts/login/'
 
 INSTALLED_APPS = (
     'django.contrib.auth',
@@ -127,6 +130,7 @@ INSTALLED_APPS = (
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',
     'blog',
+    'accounts'
 )
 
 # A sample logging configuration. The only tangible logging

@@ -23,9 +23,9 @@ def view_category(request, slug):
 
 def new_post(request):
   if request.user.is_authenticated():
-    return render_to_response('new_post.html', {
+    return render_to_response('blog/new_post.html', {
       'text': 'User Authenticated'
     })
-  return render_to_response('new_post.html', {
+  return render_to_response('blog/new_post.html', {
     'text': 'User Not Authenticated'
   })
