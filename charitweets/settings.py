@@ -92,6 +92,16 @@ TEMPLATE_LOADERS = (
 #     'django.template.loaders.eggs.Loader',
 )
 
+TEMPLATE_CONTEXT_PROCESSORS =(
+  'django.contrib.auth.context_processors.auth',
+  'django.core.context_processors.debug',
+  'django.core.context_processors.i18n',
+  'django.core.context_processors.media',
+  'django.core.context_processors.static',
+  'django.core.context_processors.tz',
+  'django.contrib.messages.context_processors.messages'
+)
+
 MIDDLEWARE_CLASSES = (
     'django.middleware.common.CommonMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -114,9 +124,10 @@ TEMPLATE_DIRS = (
     '/home/ec2-user/code/charitweets/templates',
     '/home/ec2-user/code/charitweets/blog/templates',
     '/home/ec2-user/code/charitweets/accounts/templates',
+    '/home/ec2-user/code/charitweets/ccPay/templates',
 )
 
-LOGIN_URL = 'accounts/login/'
+LOGIN_URL = '/accounts/login/'
 
 INSTALLED_APPS = (
     'django.contrib.auth',
@@ -130,7 +141,8 @@ INSTALLED_APPS = (
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',
     'blog',
-    'accounts'
+    'accounts',
+    'ccPay',
 )
 
 # A sample logging configuration. The only tangible logging

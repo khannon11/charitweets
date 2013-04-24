@@ -5,12 +5,15 @@ from accounts import views
 urlpatterns = patterns(
   '',
   url(r'^login/',
-    'django.contrib.auth.views.login',
-    {'template_name': 'accounts/login.html'}),
+      views.login_user,
+      name='login'),
   url(r'^profile/',
     views.view_profile,
     name='view_user_profile'),
   url(r'^logout/',
     views.logout_user,
     name='logout'),
+  url(r'^register/',
+    views.register,
+    name='register'),
 )

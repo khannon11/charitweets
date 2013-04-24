@@ -1,15 +1,21 @@
 <html>
   <head>
-    <title>{% block title %}Welcome to the Charitweet Blog{% endblock %}</title>
+    <title>{% block title %}Charitweet{% endblock %}</title>
+    {% block headers %}
+
+    {% endblock %}
   </head>
   <body>
     <div class="top_bar">
-      <span class="top_name">Charitweet</span>
-      <a href="/accounts/logout">Log out Here!</a><br />
+      {% if user.is_authenticated %}
+        Hi {{ user.first_name }}, <a href="{% url "logout" %}">Log out Here!</a>
+      {% else %}
+        <a href="{% url "login" %}">Log in here!</a>
+      {% endif %}
     </div>
     <hr>
-    <h1>{% block head_title %}Charitweet!{% endblock %}</h1>
-    {% block content%}
+    <h1>{% block head_title %}{% endblock %}</h1>
+    {% block content %}
 
     {% endblock %}
   </body>

@@ -4,7 +4,7 @@ from blog import views
 
 urlpatterns = patterns(
   '',
-  (r'^$', 'views.index'),
+  (r'^$', views.index),
   url(r'^view/(?P<slug>[^\.]+)',
       views.view_post,
       name='view_blog_post'),
