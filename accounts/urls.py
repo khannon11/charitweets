@@ -16,4 +16,13 @@ urlpatterns = patterns(
   url(r'^register/',
     views.register,
     name='register'),
+  url(r'^settings',
+    views.settings,
+    name='settings'),
+  url(r'^editUserInfo',
+    views.editUserInfo,
+    name='edit_user_info'),
+  url(r'^changePassword',
+    views.changePassword,
+    name='change_password'),
 )

@@ -3,5 +3,5 @@
 {% block title %} User Profile {% endblock %}
 
 {% block content %}
-  Hello {{ user.first_name }}
+  <a href="{% url 'settings' %}">Settings</a>
 {% endblock %}

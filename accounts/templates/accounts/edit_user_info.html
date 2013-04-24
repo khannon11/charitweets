@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  Press submit all you'd like, it doesn't do anything yet!
+  <form action="" method="POST">
+    {% csrf_token %}
+    <table>
+      <tr>
+        <td>Twitter Handle</td> 
+        <td><input type="text" name="username" value="{{ user.username }}" size="30"/></td> 
+      </tr>
+      <tr>
+        <td>Email</td>
+        <td><input type="text" name="email" value="{{ user.email }}" size="30"/></td>
+      </tr>
+      <tr>
+        <td>First Name</td>
+        <td><input type="text" name="first_name" value="{{ user.first_name }}" size="30"/></td>
+      </tr>
+      <tr>
+        <td>Last Name</td>
+        <td><input type="text" name="last_name" value="{{ user.last_name }}" size="30"/></td>
+      </tr>
+      <tr>
+        <td><input type="submit" /></td>
+        <td></td>
+      </tr>
+    </table>
+
+{% endblock %}

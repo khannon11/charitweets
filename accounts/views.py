@@ -22,6 +22,8 @@ def login_user(request):
       if user.is_active:
         login(request, user)
         state = "Congratulations, you're logged in!"
+        return render_to_response('accounts/profile.html',
+                                  context_instance=RequestContext(request))
       else:
         state = "Your account is no longer active, please contact site admin"
     else:
@@ -72,4 +74,19 @@ def register(request):
     uf = UserRegistrationForm()
   return render_to_response('accounts/register.html',
                             {'form': uf},
+                            context_instance=RequestContext(request))
+
+@login_required
+def settings(request):
+  return render_to_response('accounts/settings.html',
+                           context_instance=RequestContext(request))
+
+@login_required
+def editUserInfo(request):
+  return render_to_response('accounts/edit_user_info.html',
+                            context_instance=RequestContext(request))
+
+@login_required
+def changePassword(request):
+  return render_to_response('accounts/change_password.html',
                             context_instance=RequestContext(request))
