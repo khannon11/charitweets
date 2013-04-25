@@ -88,5 +88,24 @@ def editUserInfo(request):
 
 @login_required
 def changePassword(request):
+  error = ''
+  if request.method == 'POST':
+    form = PasswordChangeForm(request.POST)
+    if form.is_valid():
+      if form.cleaned_data['password1'] == form.cleaned_data['password2']:
+        request.user.set_password(form.cleaned_data['password1'])
+        request.user.save()
+        return settings(request)
+      else:
+        error = 'The passwords must match!'
+  form = PasswordChangeForm()
   return render_to_response('accounts/change_password.html',
+                            {'form': form, 'error': error},
                             context_instance=RequestContext(request))
+
+
+class PasswordChangeForm(forms.Form):
+  password1 = forms.CharField(label=u'Password',
+                              widget=forms.PasswordInput)
+  password2 = forms.CharField(label=u'Confirm Password',
+                              widget=forms.PasswordInput)

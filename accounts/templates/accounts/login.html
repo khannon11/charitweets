@@ -7,10 +7,15 @@
     {% if next %}
       <input type="hidden" name="next" value="{{ next }}" />
     {% endif %}
-    Username:
-    <input type="text" name="username" value="{{ username }}" /><br />
-    Password:
-    <input type="password" name="password" value="" /><br />
+    <table>
+      <tr>
+        <td>Twitter Handle:</td>
+        <td><input type="text" name="username" value="{{ username }}" /><br /></td>
+      </tr>
+      <tr>
+        <td>Password:</td>
+        <td><input type="password" name="password" value="" /><br /></td>
+    </table>
     <input type="submit" value="Log In" />
   </form>
 {% endblock %}
