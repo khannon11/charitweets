@@ -77,8 +77,9 @@ def register(request):
                             context_instance=RequestContext(request))
 
 @login_required
-def settings(request):
+def settings(request, status=''):
   return render_to_response('accounts/settings.html',
+                           {'status': status},
                            context_instance=RequestContext(request))
 
 @login_required
@@ -95,7 +96,7 @@ def changePassword(request):
       if form.cleaned_data['password1'] == form.cleaned_data['password2']:
         request.user.set_password(form.cleaned_data['password1'])
         request.user.save()
-        return settings(request)
+        return settings(request, 'Password changed successfully')
       else:
         error = 'The passwords must match!'
   form = PasswordChangeForm()
