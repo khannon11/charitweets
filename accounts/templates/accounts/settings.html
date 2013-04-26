@@ -1,7 +1,8 @@
 {% extends 'base.html' %}
 
 {% block content %}
-  {{ status }}
+  {{ status }} <br />
+  <a href="{% url 'view_user_profile' %}">Back to Profile</a>
   <table>
     <tr>
       <td>Twitter Handle</td> 
@@ -24,7 +25,8 @@
       <td>{{ user.last_name }}</td>
     </tr>
   </table>
-  <a href="{% url 'edit_user_info' %}">Edit User Info</a>
+  <a href="{% url 'edit_user_info' %}">Edit User Info</a> <br />
+  <a href="{% url 'add_card' %}">Add Credit Card</a> <br />
       
 
 {% endblock %}

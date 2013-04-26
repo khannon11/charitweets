@@ -25,4 +25,7 @@ urlpatterns = patterns(
   url(r'^changePassword',
     views.changePassword,
     name='change_password'),
+  url(r'^addCard',
+    views.addCard,
+    name='add_card'),
 )

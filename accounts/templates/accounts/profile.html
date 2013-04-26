@@ -3,5 +3,15 @@
 {% block title %} User Profile {% endblock %}
 
 {% block content %}
-  <a href="{% url 'settings' %}">Settings</a>
+  <a href="{% url 'settings' %}">Settings</a> <br />
+  {% if customers %}
+    <h3> Cards on File </h3>
+    <ul>
+      {% for customer in customers %}
+        <li>{{ customer.active_card.last4 }}</li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <h3> No Credit Cards on File </h3>
+  {% endif %}
 {% endblock %}

@@ -6,7 +6,11 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.http import HttpResponseRedirect
 
-from accounts.models import UserForm
+from accounts.models import UserForm, StripeCustomer
+#from ccPay.models import StripeCustomer
+
+import stripe
+import stripe_helper
 
 def login_user(request):
   state = 'Please log in'
@@ -44,7 +48,10 @@ def logout_user(request):
 
 @login_required
 def view_profile(request):
+  stripe_customers = StripeCustomer.objects.filter(user=request.user)
+  customers = [stripe.Customer.retrieve(cus.customer_id) for cus in stripe_customers]
   return render_to_response('accounts/profile.html',
+                            {'customers': customers},
                             context_instance=RequestContext(request))
 
 class UserRegistrationForm(forms.Form):
@@ -82,9 +89,32 @@ def settings(request, status=''):
                            {'status': status},
                            context_instance=RequestContext(request))
 
+class EditUserInfoForm(forms.Form):
+  # TODO propagate username changes
+  #username = forms.CharField(label=u'Twitter Handle')
+  email = forms.CharField(label=u'Email')
+  first_name = forms.CharField(label=u'First Name')
+  last_name = forms.CharField(label=u'Last Name')
+
 @login_required
 def editUserInfo(request):
+  error = ''
+  if request.method == 'POST':
+    form = EditUserInfoForm(request.POST)
+    if form.is_valid():
+      if form.cleaned_data['email'] != request.user.email:
+        request.user.email = form.cleaned_data['email']
+      if form.cleaned_data['first_name'] != request.user.first_name:
+        request.user.first_name = form.cleaned_data['first_name']
+      if form.cleaned_data['last_name'] != request.user.last_name:
+        request.user.last_name = form.cleaned_data['last_name']
+      request.user.save()  
+      return settings(request, 'User info changed successfully!')
+  form = EditUserInfoForm(initial={'email': request.user.email,
+                                   'first_name': request.user.first_name,
+                                   'last_name': request.user.last_name})
   return render_to_response('accounts/edit_user_info.html',
+                            {'form': form, 'error': error},
                             context_instance=RequestContext(request))
 
 @login_required
@@ -110,3 +140,16 @@ class PasswordChangeForm(forms.Form):
                               widget=forms.PasswordInput)
   password2 = forms.CharField(label=u'Confirm Password',
                               widget=forms.PasswordInput)
+
+@login_required
+def addCard(request):
+  if request.method == 'POST':
+    stripeToken = request.POST.get('stripeToken')
+    customer = stripe.Customer.create(email=request.user.email,
+                                      card=stripeToken)
+    stripeCustomer = StripeCustomer(user=request.user,
+                                    customer_id=customer.id)
+    stripeCustomer.save()
+    return settings(request, 'Card Successfully Added')
+  return render_to_response('accounts/add_card.html',
+                            context_instance=RequestContext(request))
