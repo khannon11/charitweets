@@ -9,6 +9,7 @@
 
     var stripeResponseHandler = function(status, response) {
       var $form = $('#payment-form');
+      console.log($("#email"));
 
       if (response.error) {
         // Show errors
@@ -30,7 +31,7 @@
 
         Stripe.createToken($form, stripeResponseHandler);
 
-        // Prevent from's default action
+        // Prevent form's default action
         return false;
       });
     });
@@ -45,62 +46,69 @@
     <span class="payment-errors"></span>
 
   <div class="form-row">
-      <label>
-        <span>Card Number</span>
-        <input type="text" size="20" data-stripe="number"/>
-      </label>
-    </div>
-
-    <div class="form-row">
-      <label>
-        <span>Expiration (MM/YYYY)</span>
-        <input type="text" size="2" data-stripe="exp-month"/>
-      </label>
-      <span> / </span>
-      <input type="text" size="4" data-stripe="exp-year"/>
-    </div>
+    <label>
+      <span>Card Number</span>
+      <input type="text" size="20" data-stripe="number"/>
+    </label>
+  </div>
 
   <div class="form-row">
-      <label>
-        <span>CVC</span>
-        <input type="text" size="4" data-stripe="cvc"/>
-      </label>
-    </div>
+    <label>
+      <span>Expiration (MM/YYYY)</span>
+      <input type="text" size="2" data-stripe="exp-month"/>
+    </label>
+    <span> / </span>
+    <input type="text" size="4" data-stripe="exp-year"/>
+  </div>
 
   <div class="form-row">
-      <label>
-        <span>Address Line 1</span>
-        <input type="text" size="20" data-stripe="address_line1"/>
-      </label>
-    </div>
+    <label>
+      <span>CVC</span>
+      <input type="text" size="4" data-stripe="cvc"/>
+    </label>
+  </div>
 
   <div class="form-row">
-      <label>
-        <span>Address Line 2</span>
-        <input type="text" size="20" data-stripe="address_line2"/>
-      </label>
-    </div>
+    <label>
+      <span>Address Line 1</span>
+      <input type="text" size="20" data-stripe="address_line1"/>
+    </label>
+  </div>
 
   <div class="form-row">
-      <label>
-        <span>City</span>
-        <input type="text" size="20" data-stripe="address_city"/>
-      </label>
-    </div>
+    <label>
+      <span>Address Line 2</span>
+      <input type="text" size="20" data-stripe="address_line2"/>
+    </label>
+  </div>
 
   <div class="form-row">
-      <label>
-        <span>State</span>
-        <input type="text" size="20" data-stripe="address_state"/>
-      </label>
-    </div>
+    <label>
+      <span>City</span>
+      <input type="text" size="20" data-stripe="address_city"/>
+    </label>
+  </div>
 
   <div class="form-row">
-      <label>
-        <span>Zip Code</span>
-        <input type="text" size="20" data-stripe="address_zip"/>
-      </label>
-    </div>
+    <label>
+      <span>State</span>
+      <input type="text" size="20" data-stripe="address_state"/>
+    </label>
+  </div>
+
+  <div class="form-row">
+    <label>
+      <span>Zip Code</span>
+      <input type="text" size="20" data-stripe="address_zip"/>
+    </label>
+  </div>
+
+  <div class="form-row">
+    <label>
+      <span>Email</span>
+      <input type="text" size="30" name="email" />
+    <label>
+  </div>
 
     <button type="submit">Add Card</button>
   </form>

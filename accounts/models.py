@@ -15,3 +15,5 @@ class Donations(models.Model):
 class StripeCustomer(models.Model):
   user = models.ForeignKey(User, verbose_name='twitter handle of customer')
   customer_id = models.CharField(max_length=30)
+  primary = models.BooleanField()
+  valid = models.BooleanField()

@@ -8,8 +8,6 @@ urlpatterns = patterns('',
 
   # Examples:
   url(r'^$', 'charitweets.views.home', name='home'),
-  # url(r'^charitweets/', include('charitweets.foo.urls')),
-
   # Uncomment the admin/doc line below to enable admin documentation:
   # url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
 
@@ -18,4 +16,6 @@ urlpatterns = patterns('',
   url(r'^accounts/', include('accounts.urls')),
   url(r'^blog/', include('blog.urls')),
   url(r'^ccPay/', include('ccPay.urls')),
+  url(r'^tlogin', 'charitweets.views.tlogin'),
+  url(r'^treturn', 'charitweets.views.treturn'),
 )

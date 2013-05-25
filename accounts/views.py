@@ -4,41 +4,74 @@ from django.template import RequestContext
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
-from django.http import HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect
 
 from accounts.models import UserForm, StripeCustomer
 #from ccPay.models import StripeCustomer
 
 import stripe
 import stripe_helper
+import twitter
 
-def login_user(request):
-  state = 'Please log in'
-  username = password = ''
-  if request.POST:
-    username = request.POST.get('username')
-    password = request.POST.get('password')
-    next = request.GET.get('next')
+import urlparse
+import oauth2 as oauth
 
-    user = authenticate(username=username, password=password)
+consumer_key='5g55QBgZPuiX7dGdZPoVg'
+consumer_secret='07yF7MBTPnjHEsUmEjMUIWcz3BOFh56rjR9edamUxw'
+request_token_url='https://api.twitter.com/oauth/request_token'
+access_token_url='https://api.twitter.com/oauth/access_token'
+authorize_url='https://api.twitter.com/oauth/authorize'
+authenticate_url='https://api.twitter.com/oauth/authenticate'
+request_token = None
+default_password="default"
+consumer=oauth.Consumer(consumer_key,consumer_secret)
 
-    if user is not None:
-      if user.is_active:
-        login(request, user)
-        state = "Congratulations, you're logged in!"
-        return render_to_response('accounts/profile.html',
-                                  context_instance=RequestContext(request))
-      else:
-        state = "Your account is no longer active, please contact site admin"
+def register_user(access_token):
+  screen_name = access_token['screen_name']
+  api = twitter.Api(consumer_key, consumer_secret, access_token['oauth_token'],
+                    access_token['oauth_token_secret'])
+  user = User.objects.create_user(screen_name, '', default_password,
+                                  first_name=api.GetUser(screen_name).GetName())
+  user.save()
+
+def login_send(request):
+  request.session['next'] = request.GET.get('next')
+  client=oauth.Client(consumer)
+  resp, content = client.request(request_token_url, "POST")
+
+  if resp['status'] != '200':
+    raise Exception("Invalid response %s." % resp['status'])
+
+  global request_token
+  request_token = dict(urlparse.parse_qsl(content))
+  return HttpResponseRedirect("%s?oauth_token=%s" % (authenticate_url, request_token['oauth_token']));
+
+def login_receive(request):
+  token = oauth.Token(request_token['oauth_token'],request_token['oauth_token_secret'])
+
+  token.set_verifier(request.GET.get('oauth_verifier'))
+  client = oauth.Client(consumer, token)
+
+  resp, content = client.request(access_token_url, "POST")
+  access_token = dict(urlparse.parse_qsl(content))
+
+  if access_token['screen_name'] not in [user.username for user
+                                         in User.objects.all()]:
+    register_user(access_token)
+
+  user = authenticate(username=access_token['screen_name'], password=default_password)
+  if user is not None:
+    if user.is_active:
+      login(request, user)
     else:
-      state = "Your username / password were incorrect"
-
-    if next:
-      return redirect(next)
-
-  return render_to_response('accounts/login.html',
-                            {'state':state, 'username': username},
-                            context_instance=RequestContext(request))
+      raise Exception('User not active')
+  else:
+    raise Exception('invalid credentials')
+  next = request.session.get('next', None)
+  if next:
+    del request.session['next']
+    return HttpResponseRedirect(request.session.get('next'))
+  return view_profile(request)
 
 def logout_user(request):
   logout(request)
@@ -61,28 +94,6 @@ class UserRegistrationForm(forms.Form):
   last_name = forms.CharField(max_length=20)
   email = forms.EmailField()
     
-
-def register(request):
-  if request.method == 'POST':
-    uf = UserRegistrationForm(request.POST)
-    if uf.is_valid():
-      # TODO check passwords against each other
-      user = User.objects.create_user(uf.cleaned_data['twitter_handle'],
-                                      uf.cleaned_data['email'],
-                                      uf.cleaned_data['password'],
-                                      first_name=uf.cleaned_data['first_name'],
-                                      last_name=uf.cleaned_data['last_name'],)
-      user.save()
-      new_user = authenticate(username=uf.cleaned_data['twitter_handle'],
-                   password=uf.cleaned_data['password'])
-      login(request, new_user)
-      return view_profile(request)
-  else:
-    uf = UserRegistrationForm()
-  return render_to_response('accounts/register.html',
-                            {'form': uf},
-                            context_instance=RequestContext(request))
-
 @login_required
 def settings(request, status=''):
   return render_to_response('accounts/settings.html',
@@ -147,9 +158,18 @@ def addCard(request):
     stripeToken = request.POST.get('stripeToken')
     customer = stripe.Customer.create(email=request.user.email,
                                       card=stripeToken)
+    prev_cards = request.user.stripecustomer_set.all()
+    is_primary = not any([card.primary for card in prev_cards])
     stripeCustomer = StripeCustomer(user=request.user,
-                                    customer_id=customer.id)
+                                    customer_id=customer.id,
+                                    valid=True,
+                                    primary=is_primary)
     stripeCustomer.save()
+    email = request.POST.get('email', None)
+    if email:
+      user = request.user
+      user.email = email
+      user.save()
     return settings(request, 'Card Successfully Added')
   return render_to_response('accounts/add_card.html',
                             context_instance=RequestContext(request))

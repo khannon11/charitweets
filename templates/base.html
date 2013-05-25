@@ -4,15 +4,22 @@
     {% block headers %}
 
     {% endblock %}
+    <script>
+      function loginUser() {
+        window.location="/tlogin/";
+      }
+    </script>
   </head>
   <body>
     <div class="top_bar">
       {% if user.is_authenticated %}
-        {{ user.first_name }} {{user.last_name }} 
+        {{ user.first_name }}
         <a href="{% url "logout" %}">Logout</a>
       {% else %}
-        <a href="{% url "login" %}">Login</a> / 
-        <a href="{% url "register" %}">Register</a>
+        {% load staticfiles %}
+        <a href="/accounts/login">
+          <img src="{%static 'images/sign-in-with-twitter-gray.png' %}" />
+        </a>
       {% endif %}
     </div>
     <hr>
